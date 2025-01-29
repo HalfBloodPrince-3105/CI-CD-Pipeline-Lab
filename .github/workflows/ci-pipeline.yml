@@ -28,6 +28,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6  # Set a newer Gradle version
+
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x gradlew
