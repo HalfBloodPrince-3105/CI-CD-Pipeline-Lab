@@ -41,7 +41,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-docker:
+  docker:
     needs: build
     runs-on: ubuntu-latest
 
