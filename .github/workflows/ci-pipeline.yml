@@ -10,7 +10,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Checkout Repository
@@ -19,6 +23,7 @@ jobs:
           clean: false
 
       - name: Grant execute permission to Gradle wrapper
+        if: runner.os == 'Linux'
         run: chmod +x ./gradlew
 
       - name: Setup Java
@@ -43,6 +48,16 @@ jobs:
 
       - name: Debug Build Context
         run: ls -la .
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          clean: false
 
       - name: Setup Docker Build
         run: |
