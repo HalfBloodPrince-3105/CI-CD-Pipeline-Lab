@@ -18,6 +18,9 @@ jobs:
         with:
           clean: false
 
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
