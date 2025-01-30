@@ -43,10 +43,12 @@ jobs:
       - name: Verify JAR file location
         run: ls -l build/libs
 
-      - name: Debug Build Context (OS-specific)
-        run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            dir
-          else
-            ls -la .
-          fi
+      # Windows-specific command
+      - name: Debug Build Context (Windows)
+        if: runner.os == 'Windows'
+        run: dir
+
+      # Linux/macOS command
+      - name: Debug Build Context (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: ls -la .
