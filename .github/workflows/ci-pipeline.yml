@@ -53,6 +53,29 @@ jobs:
         if: runner.os != 'Windows'
         run: ls -la .
 
+      # Upload the JAR as an artifact to pass to the Docker job
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: java-app-jar
+          path: build/libs/*.jar
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          clean: false
+
+      # Download the JAR artifact from the build job
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: java-app-jar
+
       - name: Setup Docker Build
         run: |
           docker buildx create --use
@@ -63,4 +86,4 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker buildx build --platform linux/amd64 -t "${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}" --push .
+          docker buildx build --platform linux/amd64 -t "$(echo -n "${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}" | tr -d '\n')" --push .
