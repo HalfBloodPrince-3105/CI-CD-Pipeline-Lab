@@ -43,15 +43,12 @@ jobs:
       - name: Verify JAR file location
         run: ls -l build/libs
 
-      # Windows-specific command
-      - name: Debug Build Context (Windows)
-        if: runner.os == 'Windows'
-        run: dir
-
-      # Linux/macOS command
-      - name: Debug Build Context (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: ls -la .
+      # Upload JAR with a unique artifact name per OS
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app-jar-${{ matrix.os }}
+          path: build/libs/*.jar
 
   docker:
     needs: build
@@ -63,11 +60,11 @@ jobs:
         with:
           clean: false
 
-      # Download the JAR artifact using v4
+      # Download the artifact from Ubuntu build
       - name: Download JAR artifact
         uses: actions/download-artifact@v4
         with:
-          name: java-app-jar
+          name: java-app-jar-ubuntu-latest  # Always use the JAR built on Ubuntu
 
       - name: Setup Docker Build
         run: |
