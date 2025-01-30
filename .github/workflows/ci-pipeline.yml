@@ -53,9 +53,9 @@ jobs:
         if: runner.os != 'Windows'
         run: ls -la .
 
-      # Upload the JAR as an artifact to pass to the Docker job
+      # Upload the JAR as an artifact using v4
       - name: Upload JAR artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: java-app-jar
           path: build/libs/*.jar
@@ -70,9 +70,9 @@ jobs:
         with:
           clean: false
 
-      # Download the JAR artifact from the build job
+      # Download the JAR artifact using v4
       - name: Download JAR artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: java-app-jar
 
