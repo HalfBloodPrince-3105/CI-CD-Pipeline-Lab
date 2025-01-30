@@ -43,7 +43,7 @@ jobs:
       - name: Verify JAR file location
         run: ls -l build/libs
 
-      # Upload JAR with a unique artifact name per OS
+      # Upload JAR as artifact with unique name
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
@@ -60,11 +60,18 @@ jobs:
         with:
           clean: false
 
-      # Download the artifact from Ubuntu build
+      # Download the artifact
       - name: Download JAR artifact
         uses: actions/download-artifact@v4
         with:
-          name: java-app-jar-ubuntu-latest  # Always use the JAR built on Ubuntu
+          name: java-app-jar-ubuntu-latest
+
+      # Move the downloaded JAR to the root as app.jar
+      - name: Move JAR to Docker build context
+        run: mv java-app-jar-ubuntu-latest/*.jar app.jar
+
+      - name: Debug Build Context
+        run: ls -l
 
       - name: Setup Docker Build
         run: |
