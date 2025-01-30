@@ -1,0 +1,56 @@
+name: Java CI/CD with Gradle and Docker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          clean: false
+
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6
+
+      - name: Build the JAR
+        run: ./gradlew clean bootJar
+
+      - name: Verify JAR file location
+        run: ls -l build/libs
+
+      - name: Copy JAR to root for Docker context
+        run: cp build/libs/*.jar app.jar
+
+      - name: Debug Build Context
+        run: ls -la .
+
+      - name: Setup Docker Build
+        run: |
+          docker buildx create --use
+          docker buildx inspect --bootstrap
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and Push Docker image
+        run: docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} --push .
