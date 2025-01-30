@@ -1,8 +1,9 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:17-jdk-slim
 
 EXPOSE 8080
 
-COPY ./build/libs/my-app-1.0-SNAPSHOT.jar /usr/app/
-WORKDIR /usr/app
+COPY build/libs/*.jar /app/app.jar
+
+WORKDIR /app
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
