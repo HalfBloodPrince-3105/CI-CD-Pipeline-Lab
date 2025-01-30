@@ -66,9 +66,13 @@ jobs:
         with:
           name: java-app-jar-ubuntu-latest
 
-      # Unzip the artifact
+      # Debug: List all files in the working directory
+      - name: Debug artifact location
+        run: ls -R
+
+      # Unzip the artifact using the correct file name
       - name: Unzip the artifact
-        run: unzip java-app-jar-ubuntu-latest.zip -d extracted-artifact
+        run: unzip $(find . -name "*.zip") -d extracted-artifact
 
       # Move the JAR to the root directory as app.jar
       - name: Move JAR to Docker build context
